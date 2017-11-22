@@ -1,0 +1,10 @@
+# model
+emb_size: 128
+num_filters: 128
+num_classes: 2
+
+# train
+num_epoches: null
+train_steps: null
+train_batch_size: 32
+learning_rate: 0.001
