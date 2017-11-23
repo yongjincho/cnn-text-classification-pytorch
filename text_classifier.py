@@ -80,20 +80,41 @@ def train(args, states=None):
         epoch += 1
 
 
+def predict(args, states):
+    vocab = Vocabulary(config.vocab_file)
+    model = CnnTextClassifier(len(vocab))
+    model.load_state_dict(states["model"])
+    if torch.cuda.is_available():
+        model.cuda()
+
+    for line in args.file:
+        sequence = [vocab.token_to_id(t) for t in line.strip().split()]
+        sequences = autograd.Variable(torch.LongTensor([sequence]))
+        if torch.cuda.is_available():
+            sequences = sequences.cuda()
+
+        probs, classes = model(sequences)
+        print(classes.data[0])
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--config_files", default=[], nargs="*", help="A list of configuration files.")
-    parser.add_argument("-m", "--model_dir", type=str, required=True, help="The directory for a trained model is saved.")
     subparsers = parser.add_subparsers(title="subcommands", dest="subcommand")
+    def add_common_arguments(parser):
+        parser.add_argument("-m", "--model_dir", type=str, required=True, help="The directory for a trained model is saved.")
+        parser.add_argument("-c", "--config_files", default=[], nargs="*", help="A list of configuration files.")
 
     # For train mode
     parser_train = subparsers.add_parser("train", help="train a model")
+    add_common_arguments(parser_train)
     parser_train.add_argument("--checkpoint_interval", default=1000, type=int, help="The period at which a checkpoint file will be created.")
     parser_train.add_argument("--keep_checkpoint_max", default=5, type=int, help="The number of checkpoint files to be preserved.")
     parser_train.add_argument("--summary_interval", default=100, type=int, help="The period at which summary will be saved.")
 
     # For predict mode
     parser_predict = subparsers.add_parser("predict", help="predict by using a trained model")
+    add_common_arguments(parser_predict)
+    parser_predict.add_argument("file", type=argparse.FileType("r"), help="An input text file.")
 
     args = parser.parse_args()
 

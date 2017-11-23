@@ -37,6 +37,6 @@ class CnnTextClassifier(nn.Module):
 
         # Prediction
         probs = F.softmax(logits)       # [B, class]
-        classes = torch.max(probs, 1)   # [B]
+        classes = torch.max(probs, 1)[1]# [B]
 
         return probs, classes
