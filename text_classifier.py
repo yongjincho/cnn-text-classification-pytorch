@@ -35,7 +35,7 @@ def train(args, states=None):
         step = 0
 
     is_finished = False
-    while (not config.num_epoches or epoch < config.num_epoches) and not is_finished:
+    while (not config.num_epochs or epoch < config.num_epochs) and not is_finished:
         logging.info("==================== Epoch: {} ====================".format(epoch))
         running_losses = []
         for batch in train_set:

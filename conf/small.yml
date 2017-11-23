@@ -4,7 +4,7 @@ num_filters: 128
 num_classes: 2
 
 # train
-num_epoches: null
+num_epochs: null
 train_steps: null
 train_batch_size: 32
 learning_rate: 0.001
